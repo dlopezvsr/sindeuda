@@ -8,6 +8,6 @@ def root():
     return {"message": "hello world"}
 
 
-@app.post("/")
+@app.post("/post")
 def post():
     return {"message": "hello world from the post rout"}
