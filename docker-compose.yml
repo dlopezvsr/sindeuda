@@ -1,6 +1,7 @@
 version: '3.9'
 services:
   app:
+    container_name: app
     build: .
     volumes:
       - .:/app
@@ -9,12 +10,13 @@ services:
     depends_on:
       - db
   db:
+    container_name: db
     image: postgres
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: sindeuda
-      POSTGRES_PASSWORD: sindeuda
-      POSTGRES_DB: sindeuda
+      - POSTGRES_USER=sindeuda
+      - POSTGRES_PASSWORD=sindeuda
+      - POSTGRES_DB=sindeuda
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
