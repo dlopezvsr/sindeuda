@@ -1,11 +1,16 @@
-import langchain
+from dotenv import load_dotenv
+from src.repositories.repository import UserRepo
 import getpass
 import os
 
-from langchain_community.utilities import SQLDatabase
-from langchain.chains import create_sql_query_chain
-from langchain_openai import ChatOpenAI
+load_dotenv()
 
-
-os.environ["OPENAI_API_KEY"] = getpass.getpass()
-db = SQLDatabase.from_uri("")
+user = UserRepo()
+values = {
+    'user_id': "123asd",
+    'user_name': 'Diego',
+    'user_last_name': 'Lopez',
+    'user_email': 'diego@outions.com',
+    'user_password': 'diego123'
+}
+user.add_user(**values)

@@ -12,6 +12,7 @@ langchain-community = "*"
 langchain-openai = "*"
 alembic = "*"
 psycopg2-binary = "*"
+langsmith = "*"
 
 [dev-packages]
 
