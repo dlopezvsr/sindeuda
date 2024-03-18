@@ -4,15 +4,18 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-uvicorn = {extras = ["standard"], version = "*"}
-fastapi = "*"
-sqlalchemy = "*"
 langchain = "*"
 langchain-community = "*"
+langchain-experimental = "*"
+python-dotenv = "*"
 langchain-openai = "*"
-alembic = "*"
+openai = "*"
+install = "*"
 psycopg2-binary = "*"
-langsmith = "*"
+fastapi = "*"
+uvicorn = {extras = ["standard"], version = "*"}
+sqlalchemy = "*"
+alembic = "*"
 
 [dev-packages]
 

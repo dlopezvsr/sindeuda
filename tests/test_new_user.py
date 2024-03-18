@@ -1,7 +1,5 @@
 from dotenv import load_dotenv
 from src.repositories.repository import UserRepo
-import getpass
-import os
 
 load_dotenv()
 
