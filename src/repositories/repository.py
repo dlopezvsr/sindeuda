@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, insert, update, select
 from dotenv import load_dotenv
 import os
 
-from src.models.postgres_models import User
+from src.models.postgres_models import User, Account
 
 load_dotenv()
 engine = create_engine(os.environ.get("DB_URL"))
@@ -12,11 +12,9 @@ engine = create_engine(os.environ.get("DB_URL"))
 
 @dataclass
 class UserRepo:
-    # TODO: autogenerate the id, fix model.
-    def add_user(self, user_id: str, user_name: str, user_last_name: str, user_email: str, user_password: str) -> None:
+    def add_user(self, user_name: str, user_last_name: str, user_email: str, user_password: str) -> None:
         with engine.connect() as connection:
             stmt = insert(User).values(
-                id=user_id,
                 name=user_name,
                 last_name=user_last_name,
                 email=user_email,
@@ -25,14 +23,27 @@ class UserRepo:
             connection.execute(stmt)
             connection.commit()
 
-    def get_user(self):
-        pass
+    def get_user(self, user_id: int):
+        stmt = select(User).where(User.id == user_id)
+        with engine.connect() as connection:
+            result = connection.execute(stmt)
+            return result.first()
+
+    def validate_user_exists(self, user_email: int):
+        stmt = select(User).where(User.email == user_email)
+        with engine.connect() as connection:
+            result = connection.execute(stmt)
+            return result.first()
 
 
 @dataclass
 class AccountRepo:
     def add_account(self):
-        pass
+        with engine.connect() as connection:
+            stmt = insert(Account).values(
+            )
+            connection.execute(stmt)
+            connection.commit()
 
     def get_account(self):
         pass
