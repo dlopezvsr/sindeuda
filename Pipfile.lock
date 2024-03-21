@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7a75a5cb1fc7ef7d732cd08954cf69dd5269370b116ad7aa2452f14ccffddfa6"
+            "sha256": "eb8afa63840554f419a54b1ad99e3a5f17a7c2ff3862295086a4f7132ae97eeb"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -485,21 +485,21 @@
         },
         "langchain-experimental": {
             "hashes": [
-                "sha256:94d2d63599fdbb618981416831cb2c7679b317fd1d649819639278edf45c7a21",
-                "sha256:fa4f6e54e9ed921d3fc846ae5b143a5799a6e1140bd5ba27bf39367e027f8dc1"
+                "sha256:1b6b47689a4d21f81fac5ce3e968914bf7cafb70a14695404a0a67585114e09f",
+                "sha256:8338a5e31b3dce8b072ddbdc1dda7765d864505478923e98681a93ae2555c237"
             ],
             "index": "pypi",
             "markers": "python_version < '4.0' and python_full_version >= '3.8.1'",
-            "version": "==0.0.54"
+            "version": "==0.0.55"
         },
         "langchain-openai": {
             "hashes": [
-                "sha256:4862fc72cecbee0240aaa6df0234d5893dd30cd33ca23ac5cfdd86c11d2c44df",
-                "sha256:b7aba7fcc52305e78b08197ebc54fc45cc06dbc40ba5b913bc48a22b30a4f5c9"
+                "sha256:3cb3da679da9bc33c20634a5a64e65e1f1d9f69a8b71e8622297d8c33623e8d6",
+                "sha256:96bb825be484a19cd0586725856bd159e3ed47d31ad95c6d160852abcb938ae2"
             ],
             "index": "pypi",
             "markers": "python_version < '4.0' and python_full_version >= '3.8.1'",
-            "version": "==0.0.8"
+            "version": "==0.1.0"
         },
         "langchain-text-splitters": {
             "hashes": [
@@ -997,6 +997,15 @@
             ],
             "markers": "python_version >= '3.8'",
             "version": "==2.16.3"
+        },
+        "pyjwt": {
+            "hashes": [
+                "sha256:57e28d156e3d5c10088e0c68abb90bfac3df82b40a71bd0daa20c65ccd5c23de",
+                "sha256:59127c392cc44c2da5bb3192169a91f429924e17aff6534d70fdc02ab3e04320"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.7'",
+            "version": "==2.8.0"
         },
         "python-dotenv": {
             "hashes": [

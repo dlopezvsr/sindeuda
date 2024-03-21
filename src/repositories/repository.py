@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine, insert, update, select
+from sqlalchemy import create_engine, insert, update, select, func
 from dotenv import load_dotenv
 import os
 

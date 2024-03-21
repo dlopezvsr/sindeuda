@@ -17,6 +17,7 @@ uvicorn = {extras = ["standard"], version = "*"}
 sqlalchemy = "*"
 alembic = "*"
 passlib = "*"
+pyjwt = "*"
 
 [dev-packages]
 

@@ -2,14 +2,14 @@ from pydantic import BaseModel
 from datetime import datetime
 
 
-class UserSchema:
+class UserSchema(BaseModel):
     name: str
     lastname: str
     email: str
     password: str
 
 
-class AccountSchema:
+class AccountSchema(BaseModel):
     user_id: int
     type: str
     card_name: str
@@ -18,14 +18,14 @@ class AccountSchema:
     credit_limit: int
 
 
-class CategorySchema:
+class CategorySchema(BaseModel):
     user_id: int
     category_name: str
     type: str
     expense_budget: int
 
 
-class TransactionSchema:
+class TransactionSchema(BaseModel):
     user_id: int
     transaction_date: datetime
     category_id: int

@@ -18,7 +18,7 @@ class User(Base, Mixin):
     name: Mapped[str] = mapped_column(VARCHAR(30), nullable=False)
     last_name: Mapped[str] = mapped_column(VARCHAR(30))
     email: Mapped[str] = mapped_column(VARCHAR(30), unique=True)
-    password: Mapped[str] = mapped_column(VARCHAR(50))
+    password: Mapped[str] = mapped_column(VARCHAR)
 
 
 class Account(Base, Mixin):
