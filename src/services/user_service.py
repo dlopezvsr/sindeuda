@@ -2,12 +2,12 @@ import os
 from dotenv import load_dotenv
 
 from src.repositories.repository import UserRepo
+from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 from typing import Optional
 
 load_dotenv()
-ALGORITHM = "HS256"
 pass_encription = CryptContext(schemes=["bcrypt"])
 user_operations = UserRepo()
 
@@ -31,8 +31,8 @@ def authenticate_user(user_email: str, user_password: str):
 def create_access_token(data: dict):
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=15)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, os.environ.get("SECRET_KEY"), algorithm=ALGORITHM)
+    to_encode["exp"] = expire
+    encoded_jwt = jwt.encode(to_encode, os.environ.get("SECRET_KEY"), algorithm=os.environ.get('ALGORITHM'))
     return encoded_jwt
 
 

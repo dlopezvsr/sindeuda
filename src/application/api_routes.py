@@ -1,8 +1,13 @@
 from typing import Annotated
-from fastapi import FastAPI, HTTPException, Depends
-from src.application.api_data_models import UserSchema
+from fastapi import FastAPI, HTTPException, Depends, status
+from src.application.api_data_models import UserSchema, UserLoginSchema
 from fastapi.security import OAuth2PasswordBearer
 from src.services import user_service
+from jose import JWTError, jwt
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = FastAPI()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
@@ -23,38 +28,37 @@ async def register_user(user_shema: UserSchema):
 
 
 @app.post("/login")
-async def register_user(user_email: str, user_password: str):
-    user = user_service.user_validation(user_email)
+async def register_user(user_login_form: UserLoginSchema):
+    user = user_service.user_validation(user_login_form.email)
     if not user:
         raise HTTPException(status_code=400, detail="User does not exist")
 
-    if user_service.authenticate_user(user_email, user_password):
-        access_token = user_service.create_access_token(
-            data={"sub": user.email}
-        )
+    if user_service.authenticate_user(user_login_form.email, user_login_form.password):
+        data = {"sub": user.email}
+        access_token = user_service.create_access_token(data)
         return {"access_token": access_token, "token_type": "bearer"}
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
+        payload = jwt.decode(token, os.environ.get("SECRET_KEY"), algorithms=[os.environ.get('ALGORITHM')])
+        username: str = payload["sub"]
+
         if username is None:
             raise credentials_exception
-        token_data = User(username=username)
     except JWTError:
         raise credentials_exception
-    user = fake_users_db.get(token_data.username)
-    if user is None:
+    user = user_service.user_validation(username)
+    if user.email is None:
         raise credentials_exception
-    return UserInDB(**user)
+    return user
 
 
-@app.post("/transactions/{user_id}")
-async def add_transaction(current_user=Depends(get_current_user)):
-    return current_user
+@app.get("/transactions/user_id")
+async def add_transaction(user_id=Depends(get_current_user)):
+    return user_id.email

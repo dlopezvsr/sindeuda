@@ -18,6 +18,7 @@ sqlalchemy = "*"
 alembic = "*"
 passlib = "*"
 pyjwt = "*"
+python-jose = "*"
 
 [dev-packages]
 

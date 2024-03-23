@@ -2,6 +2,11 @@ from pydantic import BaseModel
 from datetime import datetime
 
 
+class UserLoginSchema(BaseModel):
+    email: str
+    password: str
+
+
 class UserSchema(BaseModel):
     name: str
     lastname: str
