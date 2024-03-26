@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import NoResultFound
+from src.application.api_data_models import UserSchema, AccountSchema, CategorySchema, TransactionSchema
 from sqlalchemy import create_engine, insert, update, select, func
 from dotenv import load_dotenv
 import os
@@ -12,56 +14,103 @@ engine = create_engine(os.environ.get("DB_URL"))
 
 @dataclass
 class UserRepo:
-    def add_user(self, user_name: str, user_last_name: str, user_email: str, user_password: str) -> None:
+    def add_user(self, user_data: UserSchema) -> None:
         with engine.connect() as connection:
             stmt = insert(User).values(
-                name=user_name,
-                last_name=user_last_name,
-                email=user_email,
-                password=user_password
+                name=user_data.name,
+                last_name=user_data.lastname,
+                email=user_data.email,
+                password=user_data.password
             )
             connection.execute(stmt)
             connection.commit()
 
-    def get_user(self, user_id: int):
+    def get_user(self, user_id: int) -> UserSchema:
         stmt = select(User).where(User.id == user_id)
         with engine.connect() as connection:
-            result = connection.execute(stmt)
-            return result.first()
+            try:
+                result = connection.execute(stmt)
+                return result.first()
+            except NoResultFound:
+                return None
 
-    def validate_user_exists(self, user_email: int):
+    def validate_user_exists(self, user_email: int) -> UserSchema:
         stmt = select(User).where(User.email == user_email)
         with engine.connect() as connection:
+
             result = connection.execute(stmt)
             return result.first()
 
 
 @dataclass
 class AccountRepo:
-    def add_account(self):
+    def add_account(self, account_data: AccountSchema) -> None:
         with engine.connect() as connection:
             stmt = insert(Account).values(
+                user_id=account_data.user_id,
+                type=account_data.type,
+                card_name=account_data.card_name,
+                bank=account_data.bank,
+                balance=account_data.balance,
+                credit_limit=account_data.credit_limit
             )
             connection.execute(stmt)
             connection.commit()
 
-    def get_account(self):
-        pass
+    def get_account(self, account_id: int) -> AccountSchema:
+        with engine.connect() as connection:
+            stmt = select(Account).where(Account.id == account_id)
+            result = connection.execute(stmt)
+            try:
+                return result.scalar_one()
+            except NoResultFound:
+                return None
 
 
 @dataclass
 class CategoryRepo:
-    def add_category(self):
-        pass
+    def add_category(self, category_data: CategorySchema) -> None:
+        with engine.connect() as connection:
+            stmt = insert(Category).values(
+                user_id=category_data.user_id,
+                category_name=category_data.category_name,
+                type=category_data.type,
+                expense_budget=category_data.expense_budget
+            )
+            connection.execute(stmt)
+            connection.commit()
 
-    def get_category(self):
-        pass
+    def get_category(self, category_id: int) -> CategorySchema:
+        with engine.connect() as connection:
+            stmt = select(Category).where(Category.id == category_id)
+            result = connection.execute(stmt)
+            try:
+                return result.scalar_one()
+            except NoResultFound:
+                return None
 
 
 @dataclass
 class TransactionRepo:
-    def add_transaction(self):
-        pass
+    def add_transaction(self, transaction_data: TransactionSchema) -> None:
+        with engine.connect() as connection:
+            stmt = insert(Transaction).values(
+                user_id=transaction_data.user_id,
+                transaction_date=transaction_data.transaction_date,
+                category_id=transaction_data.category_id,
+                amount=transaction_data.amount,
+                description=transaction_data.description,
+                account_id=transaction_data.account_id,
+                type=transaction_data.type
+            )
+            connection.execute(stmt)
+            connection.commit()
 
-    def get_transaction(self):
-        pass
+    def get_transaction(self, transaction_id: int) -> TransactionSchema:
+        with engine.connect() as connection:
+            stmt = select(Transaction).where(Transaction.id == transaction_id)
+            result = connection.execute(stmt)
+            try:
+                return result.scalar_one()
+            except NoResultFound:
+                return None

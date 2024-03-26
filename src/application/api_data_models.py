@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from uuid import UUID
 from datetime import datetime
 
 
@@ -15,7 +16,7 @@ class UserSchema(BaseModel):
 
 
 class AccountSchema(BaseModel):
-    user_id: int
+    user_id: UUID
     type: str
     card_name: str
     bank: str
@@ -24,14 +25,14 @@ class AccountSchema(BaseModel):
 
 
 class CategorySchema(BaseModel):
-    user_id: int
+    user_id: UUID
     category_name: str
     type: str
     expense_budget: int
 
 
 class TransactionSchema(BaseModel):
-    user_id: int
+    user_id: UUID
     transaction_date: datetime
     category_id: int
     amount: int

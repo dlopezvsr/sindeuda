@@ -17,5 +17,5 @@ agent_executor = create_sql_agent(llm, db=db, agent_type="openai-tools", verbose
 
 
 agent_executor.invoke(
-    "Insert new user"
+    "What is the most expenisve transaction from last week"
 )

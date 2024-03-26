@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 
 from src.repositories.repository import UserRepo
+from src.application.api_data_models import UserSchema
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from jose import JWTError, jwt
@@ -17,9 +18,10 @@ def user_validation(user_email: str):
     return response
 
 
-def add_user_service(user_name: str, user_last_name: str, user_email: str, user_password: str):
+def add_user_service(user_data: UserSchema):
     encrypted_password = pass_encription.hash(user_password)
-    user_operations.add_user(user_name, user_last_name, user_email, encrypted_password)
+    user_data.password = encrypted_password
+    user_operations.add_user(user_data)
 
 
 def authenticate_user(user_email: str, user_password: str):
