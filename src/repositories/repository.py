@@ -4,6 +4,7 @@ from sqlalchemy.exc import NoResultFound
 from src.application.api_data_models import UserSchema, AccountSchema, CategorySchema, TransactionSchema
 from sqlalchemy import create_engine, insert, update, select, func
 from dotenv import load_dotenv
+from uuid import UUID
 import os
 
 from src.models.postgres_models import User, Account
@@ -25,8 +26,13 @@ class UserRepo:
             connection.execute(stmt)
             connection.commit()
 
-    def get_user(self, user_id: int) -> UserSchema:
-        stmt = select(User).where(User.id == user_id)
+    def get_user(self, user_email: int) -> UserSchema:
+        """
+        Validates if username(email) already exists to register a new user,
+        and also for login, and returns
+        User Object.
+        """
+        stmt = select(User).where(User.email == user_email)
         with engine.connect() as connection:
             try:
                 result = connection.execute(stmt)
@@ -34,12 +40,18 @@ class UserRepo:
             except NoResultFound:
                 return None
 
-    def validate_user_exists(self, user_email: int) -> UserSchema:
-        stmt = select(User).where(User.email == user_email)
+    def validate_user_id(self, user_id: UUID) -> UserSchema:
+        """
+        Validates with user_id to authenticate,
+        once the user alredy have an account,
+        """
+        stmt = select(User).where(User.id == user_id)
         with engine.connect() as connection:
-
-            result = connection.execute(stmt)
-            return result.first()
+            try:
+                result = connection.execute(stmt).first()
+                return result
+            except NoResultFound:
+                return None
 
 
 @dataclass

@@ -7,14 +7,20 @@ from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 from typing import Optional
+from uuid import UUID
 
 load_dotenv()
 pass_encription = CryptContext(schemes=["bcrypt"])
 user_operations = UserRepo()
 
 
-def user_validation(user_email: str):
-    response = user_operations.validate_user_exists(user_email)
+def user_id_validation(user_id: UUID):
+    response = user_operations.validate_user_id(user_id)
+    return response
+
+
+def get_user_service(user_email: str):
+    response = user_operations.get_user(user_email)
     return response
 
 
@@ -36,5 +42,3 @@ def create_access_token(data: dict):
     to_encode["exp"] = expire
     encoded_jwt = jwt.encode(to_encode, os.environ.get("SECRET_KEY"), algorithm=os.environ.get('ALGORITHM'))
     return encoded_jwt
-
-
