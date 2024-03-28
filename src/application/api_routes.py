@@ -1,8 +1,8 @@
 from typing import Annotated
 from fastapi import FastAPI, HTTPException, Depends, status
-from src.application.api_data_models import UserSchema, UserLoginSchema, AccountSchema, CategorySchema
+from src.models.api_data_models import UserSchema, UserLoginSchema, AccountSchema, CategorySchema
 from fastapi.security import OAuth2PasswordBearer
-from src.services import user_service, account_service
+from src.services import user_service, account_service, category_service
 from jose import JWTError, jwt
 from dotenv import load_dotenv
 import os
@@ -14,7 +14,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
 @app.post("/register")
-async def register_user(user_shema: UserSchema):
+async def register_user(user_shema: UserSchema) -> dict:
     if user_service.get_user_service(user_shema.email):
         raise HTTPException(status_code=400, detail="Email already registered")
 
@@ -23,13 +23,13 @@ async def register_user(user_shema: UserSchema):
 
 
 @app.post("/login")
-async def register_user(user_login_form: UserLoginSchema):
+async def register_user(user_login_form: UserLoginSchema) -> dict:
     user = user_service.get_user_service(user_login_form.email)
     if not user:
         raise HTTPException(status_code=400, detail="User does not exist")
 
     if user_service.authenticate_user(user_login_form.email, user_login_form.password):
-        data = {"sub": user.id}
+        data = {"sub": str(user.id)}
         access_token = user_service.create_access_token(data)
         return {"access_token": access_token, "token_type": "bearer"}
 
@@ -56,11 +56,19 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Use
 
 @app.post("/accounts/add/account")
 async def add_account(account: AccountSchema, token=Depends(get_current_user)):
+    if account_service.get_account_service(account.card_name):
+        raise HTTPException(status_code=400, detail="Account alredy exists")
+
+    account_service.add_account_servcie(account)
     return account
 
 
 @app.post("/categories/add/category")
 async def add_category(category: CategorySchema, token=Depends(get_current_user)):
+    if category_service.get_category_service(category.category_name):
+        raise HTTPException(status_code=400, detail="Category alredy exists")
+
+    category_service.add_category_servcie(category)
     return category
 
 

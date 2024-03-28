@@ -2,11 +2,10 @@ import os
 from dotenv import load_dotenv
 
 from src.repositories.repository import UserRepo
-from src.application.api_data_models import UserSchema
+from src.models.api_data_models import UserSchema
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
-from jose import JWTError, jwt
-from typing import Optional
+from jose import jwt
 from uuid import UUID
 
 load_dotenv()
@@ -31,14 +30,14 @@ def add_user_service(user_data: UserSchema):
 
 
 def authenticate_user(user_email: str, user_password: str):
-    encrypted_password = user_validation(user_email)
+    encrypted_password = get_user_service(user_email)
     password_validator = pass_encription.verify(user_password, encrypted_password.password)
     return password_validator
 
 
 def create_access_token(data: dict):
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=15)
+    expire = datetime.utcnow() + timedelta(minutes=60)
     to_encode["exp"] = expire
     encoded_jwt = jwt.encode(to_encode, os.environ.get("SECRET_KEY"), algorithm=os.environ.get('ALGORITHM'))
     return encoded_jwt

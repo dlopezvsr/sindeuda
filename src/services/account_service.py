@@ -1,8 +1,7 @@
-import os
 from dotenv import load_dotenv
 
 from src.repositories.repository import AccountRepo
-from src.application.api_data_models import UserSchema, AccountSchema, CategorySchema, TransactionSchema
+from src.models.api_data_models import AccountSchema
 
 load_dotenv()
 account_operations = AccountRepo()

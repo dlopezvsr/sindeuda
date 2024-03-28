@@ -1,13 +1,12 @@
 from dataclasses import dataclass
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import NoResultFound
-from src.application.api_data_models import UserSchema, AccountSchema, CategorySchema, TransactionSchema
-from sqlalchemy import create_engine, insert, update, select, func
+from src.models.api_data_models import UserSchema, AccountSchema, CategorySchema, TransactionSchema
+from sqlalchemy import create_engine, insert, select
 from dotenv import load_dotenv
 from uuid import UUID
 import os
 
-from src.models.postgres_models import User, Account
+from src.models.postgres_models import User, Account, Category
 
 load_dotenv()
 engine = create_engine(os.environ.get("DB_URL"))
@@ -69,12 +68,12 @@ class AccountRepo:
             connection.execute(stmt)
             connection.commit()
 
-    def get_account(self, account_id: int) -> AccountSchema:
+    def get_account(self, account_name: str) -> AccountSchema:
         with engine.connect() as connection:
-            stmt = select(Account).where(Account.id == account_id)
+            stmt = select(Account).where(Account.card_name == account_name)
             result = connection.execute(stmt)
             try:
-                return result.scalar_one()
+                return result.first()
             except NoResultFound:
                 return None
 
@@ -92,12 +91,12 @@ class CategoryRepo:
             connection.execute(stmt)
             connection.commit()
 
-    def get_category(self, category_id: int) -> CategorySchema:
+    def get_category(self, category_name: int) -> CategorySchema:
         with engine.connect() as connection:
-            stmt = select(Category).where(Category.id == category_id)
+            stmt = select(Category).where(Category.category_name == category_name)
             result = connection.execute(stmt)
             try:
-                return result.scalar_one()
+                return result.first()
             except NoResultFound:
                 return None
 
@@ -123,6 +122,6 @@ class TransactionRepo:
             stmt = select(Transaction).where(Transaction.id == transaction_id)
             result = connection.execute(stmt)
             try:
-                return result.scalar_one()
+                return result.first()
             except NoResultFound:
                 return None
