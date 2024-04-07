@@ -1,0 +1,27 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+langchain = "*"
+langchain-community = "*"
+langchain-experimental = "*"
+python-dotenv = "*"
+langchain-openai = "*"
+openai = "*"
+install = "*"
+psycopg2-binary = "*"
+fastapi = "*"
+uvicorn = {extras = ["standard"], version = "*"}
+sqlalchemy = "*"
+alembic = "*"
+passlib = "*"
+pyjwt = "*"
+python-jose = "*"
+dependency-injector = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
