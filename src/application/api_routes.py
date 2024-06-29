@@ -75,6 +75,6 @@ async def add_category(category: CategorySchema, token=Depends(get_current_user)
 @app.post("/transactions/query/transaction")
 async def query_transaction(token=Depends(get_current_user)):
     # TODO: 1. Handle string query, recive it correctly from body sent by user.
-    # TODO: 2. Pass string to Lanchain function that will return a dict.
+    # TODO: 2. Pass string to Langchain function that will return a dict.
     # TODO: 3. Retrieve dict from previous function and post to DB using Transaction Model
     pass

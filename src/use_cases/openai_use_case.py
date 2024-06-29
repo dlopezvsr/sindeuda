@@ -3,9 +3,11 @@ from dotenv import load_dotenv
 from dataclasses import dataclass
 from src.models.opeanai_models import PostOperation, OperationValidator
 import getpass
+from openai.resources import Completions
 import os
 
 from langchain_core.output_parsers.openai_tools import JsonOutputToolsParser
+from dependency_injector.wiring import Provide
 from langchain_core.output_parsers.openai_tools import PydanticToolsParser
 from langchain_community.utilities.sql_database import SQLDatabase
 from langchain_community.agent_toolkits import create_sql_agent
@@ -43,10 +45,10 @@ class PromptOperations:
         return result
 
 
-@dataclass
 class DatabaseOperations:
-    db: SQLDatabase
-    llm: ChatOpenAI
+    def __init__(self, db, llm):
+        self.db: SQLDatabase = db
+        self.llm: ChatOpenAI = llm
 
     def operation_processor(self, user_id, operation_information):
         db_query = f"""
@@ -67,6 +69,18 @@ class DatabaseOperations:
         result = agent_executor.invoke(db_query)
         return result
 
-@dataclass
-class OperationProcessor:
-    pass
+
+llm = ChatOpenAI(model="gpt-4-1106-preview", temperature=0)
+db = SQLDatabase.from_uri(os.environ.get("DB_URL"))
+start = DatabaseOperations(db, llm)
+
+formatted_data = {'amount': 500,
+                  'description': 'Dinner with my mom',
+                  'card_name': 'AMEX',
+                  'type': 'expense'}
+
+user_id = "28fb6f64-2433-4b8e-8a9f-55b72c42e832"
+start.operation_processor(user_id, formatted_data)
+print(start.operation_processor(user_id, formatted_data))
+
+
