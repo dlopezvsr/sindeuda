@@ -17,14 +17,3 @@ class Container(containers.DeclarativeContainer):
         SQLDatabase.from_uri,
         database_uri=config.database_uri
     )
-
-
-# TODO: Change this to the correct place where the container will be used and the objects will be injected.
-
-if __name__ == "__main__":
-    container = Container()
-    container.config.model.from_env("LLM_MODEL", required=True)
-    container.config.temperature.from_env("TEMPERATURE", as_=int, default=0)
-    container.config.database_uri.from_env("DB_URL")
-    container.wire(modules=[__name__])
-

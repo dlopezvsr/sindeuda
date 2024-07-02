@@ -46,41 +46,41 @@ class PromptOperations:
 
 
 class DatabaseOperations:
+    """
+    A class to perform operations on a database using an LLM (Language Model) for query processing.
+    Attributes:
+        db (SQLDatabase): The database connection object.
+        Llm (ChatOpenAI): The language model object used for generating SQL queries.
+    """
+
     def __init__(self, db, llm):
+        """
+        Initializes the DatabaseOperations class with the provided database and language model.
+        """
         self.db: SQLDatabase = db
         self.llm: ChatOpenAI = llm
 
     def operation_processor(self, user_id, operation_information):
-        db_query = f"""
-        From following data associated to:
-        user_id = {user_id}
-        Filter category table by {operation_information['type']},
-        Search in category table, the one better fits to description: {operation_information['description']}
-        Search in account table the one better fits to: {operation_information['card_name']}
-        return the IDs from the found category and account from user in dictionary structure, 
-        exaclty in the following format, no additional text:
-        
-        {{user_id: value
-        account_id: value
-        category_id: value}}
-        
         """
-        agent_executor = create_sql_agent(self.llm, db=self.db, agent_type="openai-tools")
-        result = agent_executor.invoke(db_query)
+        Processes the given operation information for a specific user and returns the relevant category and account IDs.
+
+        Parameters:
+            user_id (int): The ID of the user for whom the operation is being processed.
+            operation_information (dict): A dictionary containing information about the operation, including:
+                - 'type': The type of operation/category to filter by.
+                - 'description': A description to find the best related category.
+                - 'card_name': The name of the card to find the best matching account.
+
+        Returns:
+            dict: A dictionary containing the results with keys 'category'
+            and 'account', each mapping to the corresponding IDs.
+        """
+        category_db_query = f"""From following data associated to: user_id = {user_id}, Filter category table by: {operation_information['type']}, then find category_name that has better relation to description: {operation_information['description']} and return the id without further text or questions, can not be null."""
+        account_db_query = f"""From following data associated to: user_id = {user_id}, Search into account table, and find the account better fits to: {operation_information['card_name']} and return the id without further text or questions, can not be null."""
+        agent_executor = create_sql_agent(self.llm, db=self.db, agent_type="openai-tools", verbose=True)
+
+        category_result = agent_executor.invoke(category_db_query)
+        account_result = agent_executor.invoke(account_db_query)
+        result = {"category_id": category_result["output"], "account_id": account_result["output"]}
         return result
-
-
-llm = ChatOpenAI(model="gpt-4-1106-preview", temperature=0)
-db = SQLDatabase.from_uri(os.environ.get("DB_URL"))
-start = DatabaseOperations(db, llm)
-
-formatted_data = {'amount': 500,
-                  'description': 'Dinner with my mom',
-                  'card_name': 'AMEX',
-                  'type': 'expense'}
-
-user_id = "28fb6f64-2433-4b8e-8a9f-55b72c42e832"
-start.operation_processor(user_id, formatted_data)
-print(start.operation_processor(user_id, formatted_data))
-
 
