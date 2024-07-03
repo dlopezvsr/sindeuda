@@ -30,11 +30,11 @@ def brain(prompt_text: str, llm: ChatOpenAI = Provide[Container.llm]) -> dict:
 @inject
 def db_retriever(
         user_id: str,
-        prompt_expense: str,
+        prompt_information: dict,
         db: SQLDatabase = Provide[Container.rag_db_connection],
         llm: ChatOpenAI = Provide[Container.llm]):
     db_operations = DatabaseOperations(db, llm)
-    response = db_operations.operation_processor(user_id, prompt_expense)
+    response = db_operations.operation_processor(user_id, prompt_information)
     return response
 
 

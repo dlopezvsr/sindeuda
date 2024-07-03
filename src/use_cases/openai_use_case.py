@@ -66,21 +66,27 @@ class DatabaseOperations:
 
         Parameters:
             user_id (int): The ID of the user for whom the operation is being processed.
-            operation_information (dict): A dictionary containing information about the operation, including:
-                - 'type': The type of operation/category to filter by.
-                - 'description': A description to find the best related category.
-                - 'card_name': The name of the card to find the best matching account.
+            operation_information (dict): A dictionary containing information about the operation, including
+                 'type': The type of operation/category to filter by.
+                 'description': A description to find the best related category.
+                 'card_name': The name of the card to find the best matching account.
 
         Returns:
             dict: A dictionary containing the results with keys 'category'
             and 'account', each mapping to the corresponding IDs.
         """
-        category_db_query = f"""From following data associated to: user_id = {user_id}, Filter category table by: {operation_information['type']}, then find category_name that has better relation to description: {operation_information['description']} and return the id without further text or questions, can not be null."""
-        account_db_query = f"""From following data associated to: user_id = {user_id}, Search into account table, and find the account better fits to: {operation_information['card_name']} and return the id without further text or questions, can not be null."""
         agent_executor = create_sql_agent(self.llm, db=self.db, agent_type="openai-tools", verbose=True)
+        if operation_information["transaction_type"] == "GET":
+            user_db_query = f"""Return a response from the User query, based on data associated to: user_id = {user_id}. User query: {operation_information["user_query"]}"""
+            response = agent_executor.invoke(user_db_query)
+            result = {"agent_response": response["output"]}
+        else:
+            category_db_query = f"""From following data associated to: user_id = {user_id}, Filter category table by: {operation_information['type']}, then find category_name that has better relation to description: {operation_information['description']} and return the id without further text or questions, can not be null. eg. dinner with mom == category: entertainment"""
+            account_db_query = f"""From following data associated to: user_id = {user_id}, Search into account table, and find the account better fits to: {operation_information['card_name']} and return the id without further text or questions, can not be null."""
 
-        category_result = agent_executor.invoke(category_db_query)
-        account_result = agent_executor.invoke(account_db_query)
-        result = {"category_id": category_result["output"], "account_id": account_result["output"]}
+            category_result = agent_executor.invoke(category_db_query)
+            account_result = agent_executor.invoke(account_db_query)
+            result = {"category_id": category_result["output"], "account_id": account_result["output"]}
+
         return result
 
