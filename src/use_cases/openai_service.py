@@ -38,6 +38,10 @@ def db_retriever(
     return response
 
 
+def prompt_processor():
+    ...
+
+
 if __name__ == "__main__":
     container = Container()
     container.config.model.from_env("LLM_MODEL", required=True)

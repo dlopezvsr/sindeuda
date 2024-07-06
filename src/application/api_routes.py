@@ -1,8 +1,9 @@
-from typing import Annotated
-from fastapi import FastAPI, HTTPException, Depends, status
-from src.models.api_data_models import UserSchema, UserLoginSchema, AccountSchema, CategorySchema
-from fastapi.security import OAuth2PasswordBearer
+from src.models.api_data_models import UserSchema, UserLoginSchema, AccountSchema, CategorySchema, TransactionSchema
 from src.services import user_service, account_service, category_service
+from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer
+from typing import Annotated
 from jose import JWTError, jwt
 from dotenv import load_dotenv
 import os
@@ -11,6 +12,19 @@ load_dotenv()
 
 app = FastAPI()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.post("/register")
@@ -32,6 +46,8 @@ async def register_user(user_login_form: UserLoginSchema) -> dict:
         data = {"sub": str(user.id)}
         access_token = user_service.create_access_token(data)
         return {"access_token": access_token, "token_type": "bearer"}
+    else:
+        raise HTTPException(status_code=401, detail="Your password is incorrect.")
 
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> UserSchema:
@@ -73,8 +89,8 @@ async def add_category(category: CategorySchema, token=Depends(get_current_user)
 
 
 @app.post("/transactions/query/transaction")
-async def query_transaction(token=Depends(get_current_user)):
-    # TODO: 1. Handle string query, recive it correctly from body sent by user.
+async def query_transaction(prompt_text: TransactionSchema, token=Depends(get_current_user)):
+    # TODO: 1. Handle string query, receive it correctly from body sent by user.
     # TODO: 2. Pass string to Langchain function that will return a dict.
     # TODO: 3. Retrieve dict from previous function and post to DB using Transaction Model
     pass

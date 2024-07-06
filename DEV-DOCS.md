@@ -22,3 +22,4 @@ GET:
 - The whole prompt will be sent to the DB using the LLM to retrieve information i.e., user wants the most recurrent
 charge of the year, or the total income of the month, etc.
 - Once the response is caught will be returned to the user.
+

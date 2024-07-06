@@ -9,7 +9,6 @@ class UserLoginSchema(BaseModel):
 
 
 class UserSchema(BaseModel):
-    id: UUID | None  # Reference purposes: this id is autogenereated, and won't be passsed in payload.
     name: str
     lastname: str
     email: str
@@ -34,9 +33,4 @@ class CategorySchema(BaseModel):
 
 class TransactionSchema(BaseModel):
     user_id: UUID
-    transaction_date: datetime
-    category_id: int
-    amount: int
-    description: str
-    account_id: int
-    type: str
+    prompt_text: str

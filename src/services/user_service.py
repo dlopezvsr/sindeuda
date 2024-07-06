@@ -24,7 +24,7 @@ def get_user_service(user_email: str):
 
 
 def add_user_service(user_data: UserSchema):
-    encrypted_password = pass_encription.hash(user_password)
+    encrypted_password = pass_encription.hash(user_data.password)
     user_data.password = encrypted_password
     user_operations.add_user(user_data)
 
