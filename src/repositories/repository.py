@@ -42,7 +42,7 @@ class UserRepo:
     def validate_user_id(self, user_id: UUID) -> UserSchema:
         """
         Validates with user_id to authenticate,
-        once the user alredy have an account,
+        once the user alredy has an account.
         """
         stmt = select(User).where(User.id == user_id)
         with engine.connect() as connection:
