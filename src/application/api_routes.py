@@ -37,7 +37,7 @@ async def register_user(user_shema: UserSchema) -> dict:
 
 
 @app.post("/login")
-async def register_user(user_login_form: UserLoginSchema) -> dict:
+async def login_user(user_login_form: UserLoginSchema) -> dict:
     user = user_service.get_user_service(user_login_form.email)
     if not user:
         raise HTTPException(status_code=400, detail="User does not exist")
