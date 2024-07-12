@@ -19,7 +19,7 @@ alembic = "*"
 passlib = "*"
 pyjwt = "*"
 python-jose = "*"
-dependency-injector = "*"
+dependency-injector = "==4.41.0"
 
 [dev-packages]
 
