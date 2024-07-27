@@ -13,6 +13,9 @@ load_dotenv()
 @inject
 def brain(prompt_text: str, llm: ChatOpenAI = Provide[Container.llm]) -> dict:
     """
+    Brain function is in charge of executing the methods related with the user prompt,
+    where first the prompt is evaluated to define if a POST or GET method will be necessary,
+    and then accordingly, the information will be arranged in a dictionary.
     """
     prompt_operations = PromptOperations(llm)
     type_of_transaction = prompt_operations.type_of_operation_validator(prompt_text)
@@ -42,6 +45,7 @@ def prompt_processor():
     ...
 
 
+# TODO: Move this block of code to the section where the services will be used (api routes)
 if __name__ == "__main__":
     container = Container()
     container.config.model.from_env("LLM_MODEL", required=True)
