@@ -36,7 +36,7 @@ class PromptOperations:
         """
         Once the operation type (POST or GET) was validated, this function
         will return a dictionary with structured data, divided and organized
-        according fileds defined on PostOperation model.
+        according fields defined on PostOperation model.
         """
         llm_with_tools = self.llm.bind_tools([PostOperation])
         tool_chain = llm_with_tools | JsonOutputToolsParser()
