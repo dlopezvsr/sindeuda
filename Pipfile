@@ -10,7 +10,6 @@ langchain-experimental = "*"
 python-dotenv = "*"
 langchain-openai = "*"
 openai = "*"
-install = "*"
 psycopg2-binary = "*"
 fastapi = "*"
 uvicorn = {extras = ["standard"], version = "*"}
