@@ -45,7 +45,7 @@ def prompt_processor():
     ...
 
 
-# TODO: Move this block of code to the section where the services will be used.
+# TODO: Move this block of code to the section where the services will be used (api routes).
 if __name__ == "__main__":
     container = Container()
     container.config.model.from_env("LLM_MODEL", required=True)
