@@ -2,7 +2,6 @@ from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy import ForeignKey, VARCHAR, TIMESTAMP, INT, UUID
 from sqlalchemy.orm import mapped_column, Mapped
 from datetime import datetime
-import sqlalchemy
 import uuid
 
 Base = declarative_base()

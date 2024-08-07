@@ -1,11 +1,9 @@
 from src.use_cases.openai_use_case import DatabaseOperations, PromptOperations
-from langchain_community.agent_toolkits import create_sql_agent
 from langchain_community.utilities.sql_database import SQLDatabase
 from langchain_openai.chat_models.base import ChatOpenAI
 from dotenv import load_dotenv
 from src.dependency_injection_worker import Container
 from dependency_injector.wiring import Provide, inject
-import os
 
 load_dotenv()
 
