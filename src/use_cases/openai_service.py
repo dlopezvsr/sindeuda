@@ -39,9 +39,8 @@ def db_retriever(
     return response
 
 
-def prompt_processor() -> dict:
-    response = brain(prompt_text="Lunch with my mom 500 amex")
-    user_id = "42e03ad7-beb3-488f-930f-e7c0d28bb1a1"
+def prompt_processor(prompt_text: str, user_id: str) -> dict:
+    response = brain(prompt_text)
     agent_response = db_retriever(user_id, response)
     return agent_response
 
@@ -53,4 +52,3 @@ if __name__ == "__main__":
     container.config.temperature.from_env("TEMPERATURE", as_=int, default=0)
     container.config.database_uri.from_env("DB_URL")
     container.wire(modules=[__name__])
-    print(prompt_processor())
