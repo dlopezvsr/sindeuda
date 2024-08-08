@@ -35,7 +35,7 @@ class UserRepo:
         with engine.connect() as connection:
             try:
                 result = connection.execute(stmt)
-                return result.first()
+                return result.one()
             except NoResultFound:
                 return None
 

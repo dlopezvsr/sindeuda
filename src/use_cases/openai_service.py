@@ -39,8 +39,11 @@ def db_retriever(
     return response
 
 
-def prompt_processor():
-    ...
+def prompt_processor() -> dict:
+    response = brain(prompt_text="Lunch with my mom 500 amex")
+    user_id = "42e03ad7-beb3-488f-930f-e7c0d28bb1a1"
+    agent_response = db_retriever(user_id, response)
+    return agent_response
 
 
 # TODO: Move this block of code to the section where the services will be used (api routes).
@@ -50,3 +53,4 @@ if __name__ == "__main__":
     container.config.temperature.from_env("TEMPERATURE", as_=int, default=0)
     container.config.database_uri.from_env("DB_URL")
     container.wire(modules=[__name__])
+    print(prompt_processor())

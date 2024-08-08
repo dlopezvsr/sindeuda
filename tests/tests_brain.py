@@ -27,7 +27,7 @@ formatted_data = {'description': 'Lunch with my mom',
                   'card_name': 'AMEX',
                   'type': 'expense'}
 
-user_id = "28fb6f64-2433-4b8e-8a9f-55b72c42e832"
+user_id = "f57dbaf3-a3c6-470d-9da4-8b57ae2c3ddf"
 llm = ChatOpenAI(model="gpt-4-1106-preview", temperature=0)
 db = SQLDatabase.from_uri(os.environ.get("DB_URL"))
 start = LLM(llm, db)

@@ -5,10 +5,10 @@ load_dotenv()
 
 user = UserRepo()
 values = {
-    "user_name": "Diego",
-    "user_last_name": "Lopez",
-    "user_email": "diego@sindeuda.com",
-    "user_password": "diego123"
+    "name": "Diego",
+    "lastname": "Lopez",
+    "email": "diego@sindeuda.com",
+    "password": "diejandro174"
 }
 user.add_user(**values)
 

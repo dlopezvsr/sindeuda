@@ -1,14 +1,8 @@
-from src.repositories.repository import UserRepo
 from dotenv import load_dotenv
 from dataclasses import dataclass
 from src.models.opeanai_models import PostOperation, OperationValidator
-import getpass
-from openai.resources import Completions
-import os
 
 from langchain_core.output_parsers.openai_tools import JsonOutputToolsParser
-from dependency_injector.wiring import Provide
-from langchain_core.output_parsers.openai_tools import PydanticToolsParser
 from langchain_community.utilities.sql_database import SQLDatabase
 from langchain_community.agent_toolkits import create_sql_agent
 from langchain_openai import ChatOpenAI
@@ -60,7 +54,7 @@ class DatabaseOperations:
         self.db: SQLDatabase = db
         self.llm: ChatOpenAI = llm
 
-    def operation_processor(self, user_id, operation_information):
+    def operation_processor(self, user_id: str, operation_information: dict) -> dict:
         """
         Processes the given operation information for a specific user and returns the relevant category and account IDs.
 
