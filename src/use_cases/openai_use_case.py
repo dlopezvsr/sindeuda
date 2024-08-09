@@ -6,6 +6,8 @@ from langchain_core.output_parsers.openai_tools import JsonOutputToolsParser
 from langchain_community.utilities.sql_database import SQLDatabase
 from langchain_community.agent_toolkits import create_sql_agent
 from langchain_openai import ChatOpenAI
+from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.output_parsers import StrOutputParser
 
 load_dotenv()
 
@@ -84,3 +86,27 @@ class DatabaseOperations:
 
         return result
 
+    # TODO: This functions below is yet for testing purposes, pending to validate.
+    def operation_processor_simple(self, user_id: str, operation_information: dict) -> dict:
+        from src.services.category_service import get_all_categories_service
+
+        db_categories = get_all_categories_service(user_id)
+        list_of_categories = [{
+            "category_name": tuple(row)[1],
+            "category_id": tuple(row)[4]} for row in db_categories]
+
+        system_message = (
+            "Based on the following list of categories names, "
+            "return only and nothing else than the category_id of the category that most relates with the description"
+            "No further text needed."
+        )
+        human_message = f"categories names: {operation_information['description']}, description: {list_of_categories}"
+        messages = [
+            SystemMessage(content=system_message),
+            HumanMessage(content=human_message),
+        ]
+        parser = StrOutputParser()
+        response = self.llm.invoke(messages)
+        result = parser.invoke(response)
+
+        return result
