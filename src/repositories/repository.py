@@ -107,11 +107,10 @@ class CategoryRepo:
             except NoResultFound:
                 return None
 
-    def get_all_categories(self, category_name: int, user_id:UUID) -> CategorySchema:
+    def get_all_categories(self, user_id: UUID) -> CategorySchema:
         with engine.connect() as connection:
             stmt = select(Category).where(
-                (Category.category_name == category_name) &
-                (Category.user_id == user_id)
+                Category.user_id == user_id
             )
             result = connection.execute(stmt)
             try:

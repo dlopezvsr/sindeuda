@@ -88,6 +88,16 @@ async def add_category(category: CategorySchema, token=Depends(get_current_user)
     return category
 
 
+@app.get("/categories/get/categories/{user_id}")
+async def get_all_categories(user_id, token=Depends(get_current_user)):
+
+    # TODO: Develop error handling
+    # raise HTTPException(status_code=400, detail="Category already exists")
+
+    response = category_service.get_all_categories_service(user_id)
+    return response
+
+
 @app.post("/transactions/query/transaction")
 async def query_transaction(prompt_text: TransactionSchema, token=Depends(get_current_user)):
     # TODO: 1. Handle string query, receive it correctly from body sent by user.
