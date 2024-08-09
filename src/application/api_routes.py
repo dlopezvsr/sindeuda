@@ -1,6 +1,8 @@
+import json
+
 from src.models.api_data_models import UserSchema, UserLoginSchema, AccountSchema, CategorySchema, TransactionSchema
 from src.services import user_service, account_service, category_service
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends, status, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
 from typing import Annotated
@@ -94,8 +96,15 @@ async def get_all_categories(user_id, token=Depends(get_current_user)):
     # TODO: Develop error handling
     # raise HTTPException(status_code=400, detail="Category already exists")
 
-    response = category_service.get_all_categories_service(user_id)
-    return response
+    db_categories = category_service.get_all_categories_service(user_id)
+    response = [{"category_name": tuple(row)[1],
+                 "type": tuple(row)[2],
+                 "expense_budget": tuple(row)[3]} for row in db_categories]
+    response = {
+        "status_code": status.HTTP_200_OK,
+        "categories": response,
+    }
+    return Response(content=json.dumps(response), media_type="application/json")
 
 
 @app.post("/transactions/query/transaction")
