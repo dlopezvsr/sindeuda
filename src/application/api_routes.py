@@ -72,7 +72,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Use
 
 @app.post("/accounts/add/account")
 async def add_account(account: AccountSchema, token=Depends(get_current_user)):
-    if account_service.get_account_service(account.card_name):
+    if account_service.get_account_service(account.card_name, account.user_id):
         raise HTTPException(status_code=400, detail="Account alredy exists")
 
     account_service.add_account_servcie(account)
@@ -81,10 +81,10 @@ async def add_account(account: AccountSchema, token=Depends(get_current_user)):
 
 @app.post("/categories/add/category")
 async def add_category(category: CategorySchema, token=Depends(get_current_user)):
-    if category_service.get_category_service(category.category_name):
-        raise HTTPException(status_code=400, detail="Category alredy exists")
+    if category_service.get_category_service(category.category_name, category.user_id):
+        raise HTTPException(status_code=400, detail="Category already exists")
 
-    category_service.add_category_servcie(category)
+    category_service.add_category_service(category)
     return category
 
 

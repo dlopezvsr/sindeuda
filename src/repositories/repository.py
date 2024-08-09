@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from uuid import UUID
 import os
 
-from src.models.postgres_models import User, Account, Category
+from src.models.postgres_models import User, Account, Category, Transaction
 
 load_dotenv()
 engine = create_engine(os.environ.get("DB_URL"))
@@ -68,9 +68,12 @@ class AccountRepo:
             connection.execute(stmt)
             connection.commit()
 
-    def get_account(self, account_name: str) -> AccountSchema:
+    def get_account(self, account_name: str, user_id: UUID) -> AccountSchema:
         with engine.connect() as connection:
-            stmt = select(Account).where(Account.card_name == account_name)
+            stmt = select(Account).where(
+                (Account.card_name == account_name) &
+                (Account.user_id == user_id)
+            )
             result = connection.execute(stmt)
             try:
                 return result.first()
@@ -91,12 +94,28 @@ class CategoryRepo:
             connection.execute(stmt)
             connection.commit()
 
-    def get_category(self, category_name: int) -> CategorySchema:
+    def get_category(self, category_name: int, user_id: UUID) -> CategorySchema:
         with engine.connect() as connection:
-            stmt = select(Category).where(Category.category_name == category_name)
+            stmt = select(Category).where(
+                (Category.category_name == category_name) &
+                (Category.user_id == user_id)
+            )
+
             result = connection.execute(stmt)
             try:
                 return result.first()
+            except NoResultFound:
+                return None
+
+    def get_all_categories(self, category_name: int, user_id:UUID) -> CategorySchema:
+        with engine.connect() as connection:
+            stmt = select(Category).where(
+                (Category.category_name == category_name) &
+                (Category.user_id == user_id)
+            )
+            result = connection.execute(stmt)
+            try:
+                return result.all()
             except NoResultFound:
                 return None
 

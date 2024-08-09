@@ -33,7 +33,14 @@ def db_retriever(
         user_id: str,
         prompt_information: dict,
         db: SQLDatabase = Provide[Container.rag_db_connection],
-        llm: ChatOpenAI = Provide[Container.llm]):
+        llm: ChatOpenAI = Provide[Container.llm]) -> dict:
+    """
+    This function will process a dictionary with information previously structured and complemented by the brain,
+    to properly query the DB, receive information, and return and augmented response.
+
+    Return: LLM response to the user prompt.
+    Type: Dict
+    """
     db_operations = DatabaseOperations(db, llm)
     response = db_operations.operation_processor(user_id, prompt_information)
     return response
