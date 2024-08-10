@@ -1,4 +1,4 @@
-from src.use_cases.openai_service import brain
+from src.use_cases.openai_use_case import brain
 from dotenv import load_dotenv
 from src.dependency_injection_worker import Container
 

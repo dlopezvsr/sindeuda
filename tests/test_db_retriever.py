@@ -1,4 +1,4 @@
-from src.use_cases.openai_service import db_retriever
+from src.use_cases.openai_use_case import db_retriever
 from dotenv import load_dotenv
 from src.dependency_injection_worker import Container
 
