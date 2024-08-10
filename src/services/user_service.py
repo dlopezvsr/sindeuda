@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-from src.repositories.repository import UserRepo
+from src.repositories.user_repo import UserRepo
 from src.models.api_data_models import UserSchema
 from datetime import datetime, timedelta
 from passlib.context import CryptContext

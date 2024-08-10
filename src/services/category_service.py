@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from uuid import UUID
 
-from src.repositories.repository import CategoryRepo
+from src.repositories.category_repo import CategoryRepo
 from src.models.api_data_models import CategorySchema
 
 load_dotenv()

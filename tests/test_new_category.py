@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from src.repositories.repository import CategoryRepo
+from src.repositories.category_repo import CategoryRepo
 
 load_dotenv()
 

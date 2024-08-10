@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from src.repositories.repository import UserRepo
+from src.repositories.user_repo import UserRepo
 
 load_dotenv()
 

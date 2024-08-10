@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 
-from src.repositories.repository import AccountRepo
+from src.repositories.account_repo import AccountRepo
 from src.models.api_data_models import AccountSchema
 from uuid import UUID
 
