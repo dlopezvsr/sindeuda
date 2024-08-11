@@ -42,8 +42,7 @@ def db_retriever(
     Type: Dict
     """
     db_operations = DatabaseOperations(db, llm)
-    # response = db_operations.operation_processor(user_id, prompt_information)
-    response = db_operations.operation_processor_simple(user_id, prompt_information)
+    response = db_operations.operation_processor(user_id, prompt_information)
     return response
 
 

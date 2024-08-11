@@ -8,6 +8,8 @@ from langchain_community.agent_toolkits import create_sql_agent
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.output_parsers import StrOutputParser
+from src.services.category_service import get_all_categories_service
+from src.services.account_service import get_all_accounts_service
 
 load_dotenv()
 
@@ -56,6 +58,69 @@ class DatabaseOperations:
         self.db: SQLDatabase = db
         self.llm: ChatOpenAI = llm
 
+    def account_retriever(self, user_id: str):
+
+        db_accounts = get_all_accounts_service(user_id)
+
+        list_of_accounts = [{
+            "card_name": tuple(row)[2],
+            "bank_name": tuple(row)[3],
+            "account_id": tuple(row)[6]
+        } for row in db_accounts]
+
+        return list_of_accounts
+
+    def category_retriever(self, user_id: str):
+
+        db_categories = get_all_categories_service(user_id)
+
+        list_of_categories = [{
+            "category_name": tuple(row)[1],
+            "category_id": tuple(row)[4]} for row in db_categories]
+
+        return list_of_categories
+
+    def rag_id_picker(self, user_id: str, operation_information: dict) -> dict:
+        """
+        Using the LLM, a description is matched with the name of a category and a card name,
+        where only the IDs are returned.
+
+        """
+        system_messages = {
+            "category": (
+                "Based on the following list of categories names, return only and nothing else "
+                "than the category_id of the category that most relates with the description"
+                "No further text needed."),
+            "account": (
+                "Based on the following list of card names and bank names, return only and nothing else "
+                "than the account_id of the card_name or account that most relates with the description"
+                "No further text needed."),
+            "agent": (
+                "Return two ID's as dictionary with keys account_id and category_id accordingly"
+                "if one of them, or neither match with the existing options return null on the key values"
+                "No further text needed.")
+
+        }
+        human_messages = {
+            "human_message_category":
+                f"categories names: {self.category_retriever(user_id)}, description:{operation_information['description']}",
+            "human_message_account":
+                f"card and account names: {self.account_retriever(user_id)}, description: {operation_information['card_name']}"
+        }
+        messages = [
+            SystemMessage(content=system_messages["category"]),
+            SystemMessage(content=system_messages["account"]),
+            HumanMessage(content=human_messages["human_message_category"]),
+            HumanMessage(content=human_messages["human_message_account"]),
+            SystemMessage(content=system_messages["agent"]),
+        ]
+
+        parser = StrOutputParser()
+        response = self.llm.invoke(messages)
+        result = parser.invoke(response)
+
+        return result
+
     def operation_processor(self, user_id: str, operation_information: dict) -> dict:
         """
         Processes the given operation information for a specific user and returns the relevant category and account IDs.
@@ -71,57 +136,15 @@ class DatabaseOperations:
             dict: A dictionary containing the results with keys 'category'
             and 'account', each mapping to the corresponding IDs.
         """
-        agent_executor = create_sql_agent(self.llm, db=self.db, agent_type="openai-tools", verbose=True)
+
         if operation_information["transaction_type"] == "GET":
+            agent_executor = create_sql_agent(self.llm, db=self.db, agent_type="openai-tools", verbose=True)
             user_db_query = f"""Return a response from the User query, based on data associated to: user_id = {user_id}. User query: {operation_information["user_query"]}"""
             response = agent_executor.invoke(user_db_query)
             result = {"agent_response": response["output"]}
         else:
-            category_db_query = f"""From following data associated to: user_id = {user_id}, Filter category table by: {operation_information['type']}, then find category_name that has better relation to description: {operation_information['description']} and return the id without further text or questions, can not be null. eg. dinner with mom == category: entertainment"""
-            account_db_query = f"""From following data associated to: user_id = {user_id}, Search into account table, and find the account better fits to: {operation_information['card_name']} and return the id without further text or questions, can not be null."""
-
-            category_result = agent_executor.invoke(category_db_query)
-            account_result = agent_executor.invoke(account_db_query)
-            result = {"category_id": category_result["output"], "account_id": account_result["output"]}
+            result = self.rag_id_picker(user_id, operation_information)
 
         return result
 
-    # TODO: This functions below is yet for testing purposes, pending to validate.
-    def operation_processor_simple(self, user_id: str, operation_information: dict) -> dict:
-        from src.services.category_service import get_all_categories_service
 
-        db_categories = get_all_categories_service(user_id)
-        db_accounts = ...
-
-        list_of_categories = [{
-            "category_name": tuple(row)[1],
-            "category_id": tuple(row)[4]} for row in db_categories]
-
-        list_of_accounts = []
-
-        system_messages = {
-            "category": (
-                "Based on the following list of categories names, return only and nothing else "
-                "than the category_id of the category that most relates with the description"
-                "No further text needed."),
-            "account": (
-                "Based on the following list of card names, return only and nothing else "
-                "than the account_id of the card_name or account that most relates with the description"
-                "No further text needed.")
-
-        }
-        human_messages = {
-            "human_message_category":
-                f"categories names: {operation_information['description']}, description: {list_of_categories}",
-            "human_message_account":
-                f"card names: {operation_information['card_name']}, description: {list_of_accounts}"
-        }
-        messages = [
-            SystemMessage(content=system_messages["category"]),
-            HumanMessage(content=human_messages["human_message_category"])]
-
-        parser = StrOutputParser()
-        response = self.llm.invoke(messages)
-        result = parser.invoke(response)
-
-        return result
