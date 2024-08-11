@@ -17,5 +17,5 @@ if __name__ == "__main__":
     container.config.model.from_env("LLM_MODEL", required=True)
     container.config.temperature.from_env("TEMPERATURE", as_=int, default=0)
     container.config.database_uri.from_env("DB_URL")
-    container.wire(modules=["src.use_cases.openai_service"])
+    container.wire(modules=["src.use_cases.openai_use_case"])
     print(db_retriever(user_id, structured_information))

@@ -91,20 +91,35 @@ class DatabaseOperations:
         from src.services.category_service import get_all_categories_service
 
         db_categories = get_all_categories_service(user_id)
+        db_accounts = ...
+
         list_of_categories = [{
             "category_name": tuple(row)[1],
             "category_id": tuple(row)[4]} for row in db_categories]
 
-        system_message = (
-            "Based on the following list of categories names, "
-            "return only and nothing else than the category_id of the category that most relates with the description"
-            "No further text needed."
-        )
-        human_message = f"categories names: {operation_information['description']}, description: {list_of_categories}"
+        list_of_accounts = []
+
+        system_messages = {
+            "category": (
+                "Based on the following list of categories names, return only and nothing else "
+                "than the category_id of the category that most relates with the description"
+                "No further text needed."),
+            "account": (
+                "Based on the following list of card names, return only and nothing else "
+                "than the account_id of the card_name or account that most relates with the description"
+                "No further text needed.")
+
+        }
+        human_messages = {
+            "human_message_category":
+                f"categories names: {operation_information['description']}, description: {list_of_categories}",
+            "human_message_account":
+                f"card names: {operation_information['card_name']}, description: {list_of_accounts}"
+        }
         messages = [
-            SystemMessage(content=system_message),
-            HumanMessage(content=human_message),
-        ]
+            SystemMessage(content=system_messages["category"]),
+            HumanMessage(content=human_messages["human_message_category"])]
+
         parser = StrOutputParser()
         response = self.llm.invoke(messages)
         result = parser.invoke(response)

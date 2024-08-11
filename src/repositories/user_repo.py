@@ -1,6 +1,6 @@
 from src.models.api_data_models import UserSchema
 from src.models.postgres_models import User
-from _repository_config import *
+from src.repositories._repository_config import *
 
 
 @dataclass

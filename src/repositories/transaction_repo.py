@@ -1,6 +1,6 @@
 from src.models.api_data_models import TransactionSchema
 from src.models.postgres_models import Transaction
-from _repository_config import *
+from src.repositories._repository_config import *
 
 
 @dataclass
