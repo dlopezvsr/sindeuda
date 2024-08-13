@@ -1,3 +1,6 @@
+import json
+from datetime import datetime
+
 from dotenv import load_dotenv
 from dataclasses import dataclass
 from src.models.opeanai_models import PostOperation, OperationValidator
@@ -10,6 +13,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.output_parsers import StrOutputParser
 from src.services.category_service import get_all_categories_service
 from src.services.account_service import get_all_accounts_service
+from src.services.transaction_service import add_category_service
 
 load_dotenv()
 
@@ -39,6 +43,7 @@ class PromptOperations:
         llm_with_tools = self.llm.bind_tools([PostOperation])
         tool_chain = llm_with_tools | JsonOutputToolsParser()
         operation_type = tool_chain.invoke(user_prompt)
+        print(operation_type)
         result = operation_type[0]['args']
         return result
 
@@ -98,7 +103,8 @@ class DatabaseOperations:
             "agent": (
                 "Return two ID's as dictionary with keys account_id and category_id accordingly"
                 "if one of them, or neither match with the existing options return null on the key values"
-                "No further text needed.")
+                "No further text needed."
+            )
 
         }
         human_messages = {
@@ -139,12 +145,30 @@ class DatabaseOperations:
 
         if operation_information["transaction_type"] == "GET":
             agent_executor = create_sql_agent(self.llm, db=self.db, agent_type="openai-tools", verbose=True)
-            user_db_query = f"""Return a response from the User query, based on data associated to: user_id = {user_id}. User query: {operation_information["user_query"]}"""
+            user_db_query = f"""Create a SQL statement from the User query, based on data associated to: user_id = {user_id}. 
+            User query: {operation_information["user_query"]}"""
             response = agent_executor.invoke(user_db_query)
-            result = {"agent_response": response["output"]}
-        else:
-            result = self.rag_id_picker(user_id, operation_information)
+            response = {"agent_response": response["output"]}
 
-        return result
+        else:
+            ids_result = json.loads(self.rag_id_picker(user_id, operation_information))
+            if ids_result["category_id"] is None or ids_result["account_id"] is None:
+                response = "No se encontraron coincidencias, agrega una nueva cuenta o categoría"
+            else:
+                transaction = {
+                    "user_id": user_id,
+                    "transaction_date": datetime.now(),
+                    "category_id": ids_result["category_id"],
+                    "amount": operation_information["amount"],
+                    "description": operation_information["description"],
+                    "account_id": ids_result["account_id"],
+                    "type": operation_information["type"]
+                }
+                add_category_service(transaction)
+
+                response = "Transaction inserted"
+
+        return response
+
 
 

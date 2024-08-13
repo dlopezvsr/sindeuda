@@ -47,8 +47,8 @@ def db_retriever(
 
 
 def prompt_processor(prompt_text: str, user_id: str) -> dict:
-    response = brain(prompt_text)
-    agent_response = db_retriever(user_id, response)
+    brain_response = brain(prompt_text)
+    agent_response = db_retriever(user_id, brain_response)
     return agent_response
 
 
