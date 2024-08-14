@@ -43,7 +43,7 @@ class PromptOperations:
         llm_with_tools = self.llm.bind_tools([PostOperation])
         tool_chain = llm_with_tools | JsonOutputToolsParser()
         operation_type = tool_chain.invoke(user_prompt)
-        print(operation_type)
+
         result = operation_type[0]['args']
         return result
 
@@ -146,9 +146,9 @@ class DatabaseOperations:
         if operation_information["transaction_type"] == "GET":
             agent_executor = create_sql_agent(self.llm, db=self.db, agent_type="openai-tools", verbose=True)
             user_db_query = f"""Create a SQL statement from the User query, based on data associated to: user_id = {user_id}. 
-            User query: {operation_information["user_query"]}"""
+            User query: {operation_information["user_query"]}. Return a rich response"""
             response = agent_executor.invoke(user_db_query)
-            response = {"agent_response": response["output"]}
+            response = response["output"]
 
         else:
             ids_result = json.loads(self.rag_id_picker(user_id, operation_information))
