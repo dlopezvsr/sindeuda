@@ -33,4 +33,14 @@ class CategorySchema(BaseModel):
 
 class TransactionSchema(BaseModel):
     user_id: UUID
+    transaction_date: datetime
+    category_id: UUID
+    amount: int
+    description: str
+    account_id: UUID
+    type: str
+
+
+class TransactionPromptSchema(BaseModel):
+    user_id: UUID
     prompt_text: str

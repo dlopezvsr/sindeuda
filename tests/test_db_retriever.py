@@ -6,8 +6,8 @@ load_dotenv()
 
 structured_information = {'transaction_type': 'POST',
                           'amount': 500,
-                          'description': 'Dinner with my mom',
-                          'card_name': 'AMEX',
+                          'description': 'Tacos con mi novia',
+                          'card_name': 'American Express',
                           'type': 'expense'}
 
 user_id = "42e03ad7-beb3-488f-930f-e7c0d28bb1a1"

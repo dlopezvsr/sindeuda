@@ -15,3 +15,8 @@ def add_account_servcie(account: AccountSchema):
 def get_account_service(account_id: int, user_id: UUID) -> AccountSchema:
     response = account_operations.get_account(account_id, user_id)
     return response
+
+
+def get_all_accounts_service(user_id: UUID) -> AccountSchema:
+    response = account_operations.get_all_accounts(user_id)
+    return response

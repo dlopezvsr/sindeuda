@@ -1,4 +1,4 @@
-from src.models.api_data_models import TransactionSchema
+from src.models.api_data_models import TransactionPromptSchema, TransactionSchema
 from src.models.postgres_models import Transaction
 from src.repositories._repository_config import *
 

@@ -29,3 +29,14 @@ class AccountRepo:
                 return result.first()
             except NoResultFound:
                 return None
+
+    def get_all_accounts(self, user_id: UUID) -> AccountSchema:
+        with engine.connect() as connection:
+            stmt = select(Account).where(
+                Account.user_id == user_id
+            )
+            result = connection.execute(stmt)
+            try:
+                return result.all()
+            except NoResultFound:
+                return None

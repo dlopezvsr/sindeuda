@@ -1,6 +1,7 @@
 import json
 
-from src.models.api_data_models import UserSchema, UserLoginSchema, AccountSchema, CategorySchema, TransactionSchema
+from src.models.api_data_models import UserSchema, UserLoginSchema, AccountSchema, CategorySchema, TransactionPromptSchema
+from src.use_cases import openai_use_case
 from src.services import user_service, account_service, category_service
 from fastapi import FastAPI, HTTPException, Depends, status, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -108,8 +109,6 @@ async def get_all_categories(user_id, token=Depends(get_current_user)):
 
 
 @app.post("/transactions/query/transaction")
-async def query_transaction(prompt_text: TransactionSchema, token=Depends(get_current_user)):
-    # TODO: 1. Handle string query, receive it correctly from body sent by user.
-    # TODO: 2. Pass string to Langchain function that will return a dict.
-    # TODO: 3. Retrieve dict from previous function and post to DB using Transaction Model
-    pass
+async def query_transaction(prompt_text: TransactionPromptSchema, token=Depends(get_current_user)):
+    response = openai_use_case.prompt_processor(prompt_text.prompt_text, prompt_text.user_id)
+    return Response(content=response, media_type="text/plain")
