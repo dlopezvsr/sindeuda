@@ -8,5 +8,5 @@ load_dotenv()
 transaction_operations = TransactionRepo()
 
 
-def add_category_service(transaction: dict) -> None:
-    transaction_operations.add_transaction(TransactionSchema(**transaction))
+async def add_category_service(transaction: dict) -> None:
+    await transaction_operations.add_transaction(TransactionSchema(**transaction))

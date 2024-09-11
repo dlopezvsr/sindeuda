@@ -5,8 +5,8 @@ from src.repositories._repository_config import *
 
 @dataclass
 class TransactionRepo:
-    def add_transaction(self, transaction_data: TransactionSchema) -> None:
-        with engine.connect() as connection:
+    async def add_transaction(self, transaction_data: TransactionSchema) -> None:
+        async with async_engine.connect() as connection:
             stmt = insert(Transaction).values(
                 user_id=transaction_data.user_id,
                 transaction_date=transaction_data.transaction_date,
@@ -16,13 +16,13 @@ class TransactionRepo:
                 account_id=transaction_data.account_id,
                 type=transaction_data.type
             )
-            connection.execute(stmt)
-            connection.commit()
+            await connection.execute(stmt)
+            await connection.commit()
 
-    def get_transaction(self, transaction_id: int) -> TransactionSchema:
-        with engine.connect() as connection:
+    async def get_transaction(self, transaction_id: int) -> TransactionSchema:
+        async with async_engine.connect() as connection:
             stmt = select(Transaction).where(Transaction.id == transaction_id)
-            result = connection.execute(stmt)
+            result = await connection.execute(stmt)
             try:
                 return result.first()
             except NoResultFound:

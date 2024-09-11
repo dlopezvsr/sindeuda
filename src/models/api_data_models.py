@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 from uuid import UUID
 from datetime import datetime
@@ -9,10 +11,11 @@ class UserLoginSchema(BaseModel):
 
 
 class UserSchema(BaseModel):
-    name: str
-    lastname: str
+    id: UUID
     email: str
-    password: str
+    name: Optional[str] = None
+    lastname: Optional[str] = None
+    password: Optional[str] = None
 
 
 class AccountSchema(BaseModel):

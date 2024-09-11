@@ -5,8 +5,8 @@ from src.repositories._repository_config import *
 
 @dataclass
 class AccountRepo:
-    def add_account(self, account_data: AccountSchema) -> None:
-        with engine.connect() as connection:
+    async def add_account(self, account_data: AccountSchema) -> None:
+        async with async_engine.connect() as connection:
             stmt = insert(Account).values(
                 user_id=account_data.user_id,
                 type=account_data.type,
@@ -15,27 +15,27 @@ class AccountRepo:
                 balance=account_data.balance,
                 credit_limit=account_data.credit_limit
             )
-            connection.execute(stmt)
-            connection.commit()
+            await connection.execute(stmt)
+            await connection.commit()
 
-    def get_account(self, account_name: str, user_id: UUID) -> AccountSchema:
-        with engine.connect() as connection:
+    async def get_account(self, account_name: str, user_id: UUID) -> AccountSchema:
+        async with async_engine.connect() as connection:
             stmt = select(Account).where(
                 (Account.card_name == account_name) &
                 (Account.user_id == user_id)
             )
-            result = connection.execute(stmt)
+            result = await connection.execute(stmt)
             try:
                 return result.first()
             except NoResultFound:
                 return None
 
-    def get_all_accounts(self, user_id: UUID) -> AccountSchema:
-        with engine.connect() as connection:
+    async def get_all_accounts(self, user_id: UUID) -> AccountSchema:
+        async with async_engine.connect() as connection:
             stmt = select(Account).where(
                 Account.user_id == user_id
             )
-            result = connection.execute(stmt)
+            result = await connection.execute(stmt)
             try:
                 return result.all()
             except NoResultFound:

@@ -13,24 +13,25 @@ pass_encription = CryptContext(schemes=["bcrypt"])
 user_operations = UserRepo()
 
 
-def user_id_validation(user_id: UUID):
-    response = user_operations.validate_user_id(user_id)
+async def user_id_validation(user_id: UUID):
+    response = await user_operations.validate_user_id(user_id)
     return response
 
 
-def get_user_service(user_email: str):
-    response = user_operations.get_user(user_email)
+async def get_user_service(user_email: str):
+    response = await user_operations.get_user(user_email)
     return response
 
 
-def add_user_service(user_data: UserSchema):
+async def add_user_service(user_data: UserSchema):
     encrypted_password = pass_encription.hash(user_data.password)
     user_data.password = encrypted_password
-    user_operations.add_user(user_data)
+    await user_operations.add_user(user_data)
 
 
-def authenticate_user(user_email: str, user_password: str):
-    encrypted_password = get_user_service(user_email)
+async def authenticate_user(user_email: str, user_password: str):
+    encrypted_password = await user_operations.get_user(user_email)
+    print(encrypted_password)
     password_validator = pass_encription.verify(user_password, encrypted_password.password)
     return password_validator
 

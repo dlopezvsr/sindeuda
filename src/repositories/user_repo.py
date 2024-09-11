@@ -5,40 +5,40 @@ from src.repositories._repository_config import *
 
 @dataclass
 class UserRepo:
-    def add_user(self, user_data: UserSchema) -> None:
-        with engine.connect() as connection:
+    async def add_user(self, user_data: UserSchema) -> None:
+        async with async_engine.connect() as connection:
             stmt = insert(User).values(
                 name=user_data.name,
                 last_name=user_data.lastname,
                 email=user_data.email,
                 password=user_data.password
             )
-            connection.execute(stmt)
-            connection.commit()
+            await connection.execute(stmt)
+            await connection.commit()
 
-    def get_user(self, user_email: int) -> UserSchema:
+    async def get_user(self, user_email: str) -> UserSchema:
         """
         Validates if username(email) already exists to register a new user,
-        and also for login, and returns
-        User Object.
+        and also for login, and returns User Object.
         """
         stmt = select(User).where(User.email == user_email)
-        with engine.connect() as connection:
+
+        async with async_engine.connect() as session:
             try:
-                result = connection.execute(stmt)
+                result = await session.execute(stmt)
                 return result.one()
             except NoResultFound:
                 return None
 
-    def validate_user_id(self, user_id: UUID) -> UserSchema:
+    async def validate_user_id(self, user_id: UUID) -> UserSchema:
         """
         Validates with user_id to authenticate,
         once the user already has an account.
         """
         stmt = select(User).where(User.id == user_id)
-        with engine.connect() as connection:
+        async with async_engine.connect() as connection:
             try:
-                result = connection.execute(stmt).first()
-                return result
+                result = await connection.execute(stmt)
+                return result.first()
             except NoResultFound:
                 return None
