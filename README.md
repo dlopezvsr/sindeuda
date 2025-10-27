@@ -19,3 +19,6 @@ to your categories and corresponding cards/accounts previously created.
 - This is not ready for production yet.
 - Containers currently lie under the same docker network (spoecified on docker-compose.yml) to test API using Postman.
 - This is under development, there are still missing endpoints to integrate with a functional frontend.
+
+## Front-end
+- https://github.com/dlopezvsr/sindeuda_frontend
